@@ -1,14 +1,14 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
-const ConnectionDB = require("./config/Connection");
-/* middlewares */
+const ConnectionDB = require("../config/Connection");
+
 const app = express();
 const port = process.env.PORT || 5000;
 
+/* middlewares */
 app.use(express.json());
-app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 ConnectionDB()
   .then(() => {
@@ -18,7 +18,7 @@ ConnectionDB()
       console.log(`✅ Uploads directory: ${global.uploadsDir}`);
     });
   })
-  .catch(
-    (err) => console.error("❌ Database connection failed:", err),
-    process.exit(1)
-  );
+  .catch((err) => {
+    console.error("❌ Database connection failed:", err);
+    process.exit(1);
+  });
