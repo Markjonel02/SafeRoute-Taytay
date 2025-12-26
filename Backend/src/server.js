@@ -1,7 +1,8 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
 const ConnectionDB = require("./config/Connection");
-const mainRoute = require("./app");
+const RegisterUserRoutes = require("./routes/RegisterUserRoutes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -12,8 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* Routes */
-app.use("/api", mainRoute);
+app.use("/api/users", RegisterUserRoutes); // ✅ base path
 
+
+app.get("/", (req, res) => {
+  res.send("SafeRoute Navigator Backend is running!");
+});
 ConnectionDB()
   .then(() => {
     app.listen(port, () => {

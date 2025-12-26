@@ -1,5 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
+
 const Register_user = async (req, res) => {
   try {
     const {
@@ -45,20 +47,21 @@ const Register_user = async (req, res) => {
         .json({ message: "All required fields must be filled" });
     }
 
-    // ✅ Check for duplicates
     const existingUser = await User.findOne({
       $or: [{ username }, { email }, { phonenumber }],
     });
-
     if (existingUser) {
       return res
         .status(409)
         .json({ message: "Username, email, or phone number already in use" });
     }
-    // Registration logic here
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       username,
-      password,
+      password: hashedPassword,
       firstname,
       lastname,
       birthdate,
@@ -74,9 +77,16 @@ const Register_user = async (req, res) => {
       telephone,
       role,
       location,
-    }).save();
-    res.status(201).json({ message: "User registered successfully", newUser });
+    });
+    await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "User registered successfully", user: newUser });
+
+    console.log(`New user registered: ${username}`);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
