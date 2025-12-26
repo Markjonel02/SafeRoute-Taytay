@@ -1,5 +1,6 @@
+// routes/RegisterUserRoutes.js
 const express = require("express");
-const { Register_user } = require("./RegisterUserRoutes"); // make sure you export correctly
+const { Register_user } = require("../controllers/RegisterUserController"); // ✅ correct import
 const router = express.Router();
 
 /* Routes */

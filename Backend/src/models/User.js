@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["Male", "Female", "Other", "prefer-not-to-say"],
+      enum: ["male", "female", "other", "prefer-not-to-say"],
     },
     phonenumber: {
       type: String,
@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema(
     },
     address: { type: String, required: true },
     city: { type: String, required: true },
-    state: { type: String, required: true },
+    province: { type: String, required: true },
     barangay: { type: String, required: true },
     zip: { type: String, required: true },
     telephone: { type: String, default: null },
