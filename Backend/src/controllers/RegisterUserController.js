@@ -92,4 +92,4 @@ const Register_user = async (req, res) => {
   }
 };
 
-module.exports = { Register_user }; 
+module.exports = { Register_user };
