@@ -13,10 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* Routes */
-app.use("/api/users", RegisterUserRoutes); // ✅ base path
+app.use("/api", RegisterUserRoutes); // ✅ base path
 
-
-app.get("/", (req, res) => {
+app.get("/api/users", (req, res) => {
   res.send("SafeRoute Navigator Backend is running!");
 });
 ConnectionDB()
