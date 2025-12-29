@@ -16,8 +16,9 @@ const Register_user = async (req, res) => {
       email,
       address,
       city,
-      state,
-      barangay,
+      state, // must match request body
+      barangay, // must match request body
+      province,
       zip,
       telephone,
       role,
@@ -38,6 +39,7 @@ const Register_user = async (req, res) => {
       !city ||
       !state ||
       !barangay ||
+      !province ||
       !zip ||
       !role ||
       !location
@@ -56,7 +58,6 @@ const Register_user = async (req, res) => {
         .json({ message: "Username, email, or phone number already in use" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -73,6 +74,7 @@ const Register_user = async (req, res) => {
       city,
       state,
       barangay,
+      province,
       zip,
       telephone,
       role,
@@ -80,15 +82,14 @@ const Register_user = async (req, res) => {
     });
     await newUser.save();
 
+    console.log(`New user registered: ${username}`);
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
-
-    console.log(`New user registered: ${username}`);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { Register_user };
+module.exports = { Register_user }; 
