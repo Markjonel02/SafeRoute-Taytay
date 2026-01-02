@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import {
   FaTachometerAlt,
@@ -8,8 +7,6 @@ import {
   FaChartLine,
   FaCog,
   FaFileAlt,
-  FaArrowLeft,
-  FaArrowRight,
 } from "react-icons/fa";
 
 const NaItems = [
@@ -26,11 +23,9 @@ const NaItems = [
   { name: "System Logs", path: "/system-logs", icon: FaFileAlt },
 ];
 
-const Navigations = () => {
-
-  
+const Navigations = ({ isCollapsed }) => {
   return (
-    <Box display="flex" flexDirection="column" p={2}>
+    <Box display="flex" flexDirection="column">
       {NaItems.map((item) => {
         const Icon = item.icon;
         return (
@@ -42,8 +37,8 @@ const Navigations = () => {
             borderRadius="md"
             _hover={{ bg: "blue.600", cursor: "pointer", color: "white" }}
           >
-            <Box as={Icon} mr={3} />
-            <Text>{item.name}</Text>
+            <Box as={Icon} mr={isCollapsed ? 0 : 3} />
+            {!isCollapsed && <Text>{item.name}</Text>}
           </Flex>
         );
       })}

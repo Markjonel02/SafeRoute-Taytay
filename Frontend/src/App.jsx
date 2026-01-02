@@ -19,7 +19,6 @@ const App = () => {
         transition="all 0.3s ease"
         minW={isCollapsed ? "60px" : "200px"}
         maxW={isCollapsed ? "60px" : "200px"}
-        overflow="hidden"
       >
         {/* Header row: text + button */}
         <Flex align="center" justify="space-between" mb={4}>
@@ -34,11 +33,12 @@ const App = () => {
             onClick={() => setIsCollapsed(!isCollapsed)}
             variant="outline"
             colorScheme="blue"
-            size="sm"
+            
           />
         </Flex>
 
-        {!isCollapsed && <Navigations />}
+        {/* Navigation items */}
+        <Navigations isCollapsed={isCollapsed} />
       </Box>
 
       {/* Main Content Area */}
