@@ -30,7 +30,7 @@ const verifyJWT = async (req, res, next) => {
       });
     }
 
-    // 🔑 Verify JWT using async/await
+    // Verify JWT using async/await
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -65,7 +65,7 @@ const verifyJWT = async (req, res, next) => {
       });
     }
 
-    if (user.employeeStatus !== 1) {
+    if (user.userStatus !== 1) {
       return res.status(403).json({
         message: "Your account has been disabled. Contact administration.",
         logout: true,
