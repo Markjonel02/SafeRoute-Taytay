@@ -1,6 +1,6 @@
 // routes/RegisterUserRoutes.js
 const express = require("express");
-const { Register_user } = require("../controllers/RegisterUserController"); // ✅ correct import
+const { Register_user } = require("../controllers/AuthController"); // ✅ correct import
 const router = express.Router();
 
 /* Routes */
