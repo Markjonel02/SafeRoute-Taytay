@@ -1,21 +1,49 @@
-import { Box, Text, IconButton, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  IconButton,
+  Flex,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
 
-import Navigations from "./components/navigation/Navigations";
-import MainComponent from "./components/MainComponent";
-import TestMap from "./tests/TestMap";
-import Header from "./components/navigation/Header";
+// 🔹 Lazy-loaded components
+const Navigations = lazy(() => import("./components/navigation/Navigations"));
+const MainComponent = lazy(() => import("./components/MainComponent"));
+const Header = lazy(() => import("./components/navigation/Header"));
+
+// 🔹 Lazy-loaded pages
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
+const RoutePlanning = lazy(() => import("./pages/admin/RoutePlanning"));
+const VehicleTracking = lazy(() => import("./pages/admin/VehicleTracking"));
+const PerformanceReports = lazy(() =>
+  import("./pages/admin/PerformanceReports")
+);
+const Settings = lazy(() => import("./pages/admin/Settings"));
+const SystemLogs = lazy(() => import("./pages/admin/SystemLogs"));
+const TestMap = lazy(() => import("./tests/TestMap"));
 
 const App = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Theme-aware colors
+  const sidebarBg = useColorModeValue("blue.700", "blue.600");
+  const sidebarColor = useColorModeValue("white", "gray.100");
+
   return (
-    <Box display="flex" minH="100vh" w="full" bg="gray.100">
+    <Box
+      display="flex"
+      minH="100vh"
+      w="full"
+      bg={useColorModeValue("gray.100", "gray.900")}
+    >
       {/* Sidebar */}
       <Box
-        bg="blue.700"
-        color="white"
+        bg={sidebarBg}
+        color={sidebarColor}
         w={isCollapsed ? "60px" : "220px"}
         minW={isCollapsed ? "60px" : "220px"}
         transition="width 0.3s ease"
@@ -33,7 +61,6 @@ const App = () => {
               Navigation
             </Text>
           )}
-
           <IconButton
             aria-label="Toggle sidebar"
             size="sm"
@@ -45,21 +72,37 @@ const App = () => {
         </Flex>
 
         {/* Navigation */}
-        <Navigations isCollapsed={isCollapsed} />
+        <Suspense fallback={<Text>Loading navigation...</Text>}>
+          <Navigations isCollapsed={isCollapsed} />
+        </Suspense>
       </Box>
 
       {/* Main Content */}
       <Box flex="1" display="flex" flexDirection="column">
         {/* Header */}
-        <Header />
+        <Suspense fallback={<Box p={4}>Loading header...</Box>}>
+          <Header />
+        </Suspense>
 
         {/* Page Content */}
         <Box flex="1" p={4} overflow="auto">
-          <MainComponent>
-            <Box bg="white" p={6} rounded="md" boxShadow="sm" minH="100%">
-              <TestMap />
-            </Box>
-          </MainComponent>
+          <Suspense fallback={<Box p={4}>Loading page...</Box>}>
+            <MainComponent>
+              <Routes>
+                <Route path="/" element={<AdminDashboard />} />
+                <Route path="/user-management" element={<UserManagement />} />
+                <Route path="/route-planning" element={<RoutePlanning />} />
+                <Route path="/vehicle-tracking" element={<VehicleTracking />} />
+                <Route
+                  path="/performance-reports"
+                  element={<PerformanceReports />}
+                />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/system-logs" element={<SystemLogs />} />
+                <Route path="/test-map" element={<TestMap />} />
+              </Routes>
+            </MainComponent>
+          </Suspense>
         </Box>
       </Box>
     </Box>

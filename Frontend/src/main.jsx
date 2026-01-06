@@ -4,10 +4,14 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "leaflet/dist/leaflet.css";
 import theme from "./theme";
+import { BrowserRouter } from "react-router-dom";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>
 );
