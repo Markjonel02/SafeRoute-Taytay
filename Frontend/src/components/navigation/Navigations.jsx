@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Tooltip, Icon } from "@chakra-ui/react";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -9,7 +9,7 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 
-const NaItems = [
+const NavItems = [
   { name: "Dashboard", path: "/", icon: FaTachometerAlt },
   { name: "User Management", path: "/user-management", icon: FaUsers },
   { name: "Route Planning", path: "/route-planning", icon: FaRoute },
@@ -25,23 +25,32 @@ const NaItems = [
 
 const Navigations = ({ isCollapsed }) => {
   return (
-    <Box display="flex" flexDirection="column">
-      {NaItems.map((item) => {
-        const Icon = item.icon;
-        return (
+    <Box>
+      {NavItems.map((item) => (
+        <Tooltip
+          key={item.name}
+          label={item.name}
+          placement="right"
+          isDisabled={!isCollapsed}
+        >
           <Flex
-            key={item.name}
             align="center"
-            mb={3}
+            justify={isCollapsed ? "center" : "flex-start"}
+            mb={2}
             p={2}
             borderRadius="md"
+            transition="all 0.2s ease"
             _hover={{ bg: "blue.600", cursor: "pointer", color: "white" }}
           >
-            <Box as={Icon} mr={isCollapsed ? 0 : 3} />
-            {!isCollapsed && <Text>{item.name}</Text>}
+            <Icon as={item.icon} boxSize={5} />
+            {!isCollapsed && (
+              <Text ml={3} fontSize="sm" whiteSpace="nowrap">
+                {item.name}
+              </Text>
+            )}
           </Flex>
-        );
-      })}
+        </Tooltip>
+      ))}
     </Box>
   );
 };
