@@ -6,7 +6,7 @@ const testMap = () => {
     <MapContainer
       center={[14.5995, 120.9842]} // Manila coordinates
       zoom={13}
-      style={{ height: "100vh", width: "100%" }}
+      style={{ height: "100vh", width: "100%", borderRadius: "15px" }}
     >
       {" "}
       <TileLayer

@@ -1,10 +1,9 @@
-import { Box, Text, IconButton, Flex } from "@chakra-ui/react";
-import MainComponent from "./components/MainComponent";
-import TestMap from "./tests/TestMap";
-import Navigations from "./components/navigation/Navigations";
+import { Box, Text, Button, Flex } from "@chakra-ui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useState } from "react";
-
+import Navigations from "./components/navigation/Navigations";
+import MainComponent from "./components/MainComponent";
+import testMap from "./tests/TestMap";
 const App = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const ToggleIcon = isCollapsed ? FaArrowRight : FaArrowLeft;
@@ -15,42 +14,55 @@ const App = () => {
       <Box
         bg="blue.700"
         color="white"
-        p={4}
-        transition="all 0.3s ease"
         minW={isCollapsed ? "60px" : "200px"}
-        maxW={isCollapsed ? "60px" : "200px"}
+        p={4}
+        transition="min-width 0.3s ease"
+        display="flex"
+        flexDirection="column"
+        boxShadow="md"
       >
-        {/* Header row: text + button */}
-        <Flex align="center" justify="space-between" mb={4}>
+        {/* Header row: Navigation text + Toggle button */}
+        <Flex align="center" justify="space-between" mb={6}>
           {!isCollapsed && (
-            <Text as="h1" fontSize="xl">
+            <Text as="h1" fontSize="xl" fontWeight="bold">
               Navigation
             </Text>
           )}
-          <IconButton
-            icon={<ToggleIcon />}
-            aria-label="Toggle navigation"
+          <Button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            variant="outline"
-            colorScheme="blue"
-            
-          />
+            bg="blue.600"
+            _hover={{ bg: "blue.500" }}
+            color="white"
+            size="sm"
+            p={2}
+          >
+            <ToggleIcon />
+          </Button>
         </Flex>
 
-        {/* Navigation items */}
+        {/* Navigation Items (always render, icons-only when collapsed) */}
         <Navigations isCollapsed={isCollapsed} />
       </Box>
 
       {/* Main Content Area */}
       <Box flex="1" display="flex" flexDirection="column">
+        {/* Header */}
         <Box bg="white" p={4} boxShadow="md">
-          Header
+          <Text fontSize="lg" fontWeight="bold">
+            Header
+          </Text>
         </Box>
-        <Box flex="1" p={2} bg="gray.50">
-          <MainComponent>
-            <TestMap />
-          </MainComponent>
-        </Box>
+
+        {/* Main Container */}
+        <MainComponent>
+          <Box flex="1" bg="gray.50" overflowY="auto" rounded="sm">
+            <Box bg="white" p={6} rounded="md" boxShadow="sm" minH="100%">
+              {/* Replace the below with actual main content */}
+
+              {testMap()}
+            </Box>
+          </Box>
+        </MainComponent>
       </Box>
     </Box>
   );

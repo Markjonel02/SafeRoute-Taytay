@@ -32,13 +32,18 @@ const Navigations = ({ isCollapsed }) => {
           <Flex
             key={item.name}
             align="center"
+            justify={isCollapsed ? "center" : "flex-start"} // ✅ center when collapsed
             mb={3}
             p={2}
             borderRadius="md"
             _hover={{ bg: "blue.600", cursor: "pointer", color: "white" }}
           >
-            <Box as={Icon} mr={isCollapsed ? 0 : 3} />
-            {!isCollapsed && <Text>{item.name}</Text>}
+            <Box as={Icon} boxSize={5} /> {/* ✅ consistent icon size */}
+            {!isCollapsed && (
+              <Text ml={3} fontSize="sm">
+                {item.name}
+              </Text>
+            )}
           </Flex>
         );
       })}
