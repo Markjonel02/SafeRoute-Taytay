@@ -36,7 +36,8 @@ const NAV_ITEMS = [
 // 🔹 Single navigation item component
 const NavigationItem = ({ item, isCollapsed }) => {
   const hoverBg = useColorModeValue("blue.600", "blue.300");
-  const hoverColor = useColorModeValue("white", "gray.900");
+  const inactiveColor = useColorModeValue("blackAlpha.700", "gray.300"); // ✅ fixed typo + set black
+  const activeColor = useColorModeValue("white", "gray.900");
 
   return (
     <Tooltip label={item.name} placement="right" isDisabled={!isCollapsed}>
@@ -49,11 +50,15 @@ const NavigationItem = ({ item, isCollapsed }) => {
         p={2}
         borderRadius="md"
         transition="all 0.2s ease"
-        _hover={{ bg: hoverBg, color: hoverColor }}
-        _activeLink={{ bg: hoverBg, color: hoverColor }}
+        color={inactiveColor} // 🔹 default inactive color (black)
+        _hover={{ bg: hoverBg, color: activeColor }}
+        _activeLink={{ bg: hoverBg, color: activeColor }}
         aria-label={isCollapsed ? item.name : undefined}
       >
+        {/* Icon inherits parent color */}
         <Icon as={item.icon} boxSize={5} />
+
+        {/* Text inherits parent color */}
         {!isCollapsed && (
           <Text ml={3} fontSize="sm" whiteSpace="nowrap">
             {item.name}

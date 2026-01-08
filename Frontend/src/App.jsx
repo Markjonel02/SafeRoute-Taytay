@@ -30,7 +30,7 @@ const App = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Theme-aware colors
-  const sidebarBg = useColorModeValue("blue.700", "blue.600");
+  const sidebarBg = useColorModeValue("white", "blue.600");
   const sidebarColor = useColorModeValue("white", "gray.100");
 
   return (
@@ -44,11 +44,11 @@ const App = () => {
       <Box
         bg={sidebarBg}
         color={sidebarColor}
-        w={isCollapsed ? "60px" : "220px"}
-        minW={isCollapsed ? "60px" : "220px"}
+        w={isCollapsed ? "80px" : "220px"}
+        minW={isCollapsed ? "80px" : "220px"}
         transition="width 0.3s ease"
         p={4}
-        boxShadow="md"
+        boxShadow="sm"
       >
         {/* Sidebar Header */}
         <Flex
@@ -57,15 +57,15 @@ const App = () => {
           mb={6}
         >
           {!isCollapsed && (
-            <Text fontSize="lg" fontWeight="bold">
+            <Text fontSize="lg" fontWeight="bold" color={"blue.500"}>
               Navigation
             </Text>
           )}
           <IconButton
             aria-label="Toggle sidebar"
             size="sm"
-            variant="ghost"
-            colorScheme="whiteAlpha"
+            variant="solid" // ✅ use a valid variant
+            colorScheme="blue" // ✅ sets the color theme
             onClick={() => setIsCollapsed((prev) => !prev)}
             icon={isCollapsed ? <FaArrowRight /> : <FaArrowLeft />}
           />
@@ -78,7 +78,7 @@ const App = () => {
       </Box>
 
       {/* Main Content */}
-      <Box flex="1" display="flex" flexDirection="column">
+      <Box flex="1" display="flex" flexDirection="column" bg="#edf4fa">
         {/* Header */}
         <Suspense fallback={<Box p={4}>Loading header...</Box>}>
           <Header />
