@@ -5,7 +5,6 @@ const AdminDashboard = () => {
   return (
     <Box p={4}>
       <IncidentOverview />
-
       <IncidentColumnChart />
     </Box>
   );
