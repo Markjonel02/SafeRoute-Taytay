@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 
 // 🔹 Single navigation item component
 const NavigationItem = ({ item, isCollapsed }) => {
-  const hoverBg = useColorModeValue("blue.600", "blue.300");
+  const hoverBg = useColorModeValue("#0561ff", "blue.300");
   const inactiveColor = useColorModeValue("blackAlpha.700", "gray.300"); // ✅ fixed typo + set black
   const activeColor = useColorModeValue("white", "gray.900");
 
@@ -60,7 +60,7 @@ const NavigationItem = ({ item, isCollapsed }) => {
 
         {/* Text inherits parent color */}
         {!isCollapsed && (
-          <Text ml={3} fontSize="sm" whiteSpace="nowrap">
+          <Text ml={3} fontSize="sm" whiteSpace="nowrap" fontWeight={"medium"}>
             {item.name}
           </Text>
         )}

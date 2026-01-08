@@ -30,7 +30,7 @@ const App = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Theme-aware colors
-  const sidebarBg = useColorModeValue("white", "blue.600");
+  const sidebarBg = useColorModeValue("#f7f8fa", "blue.600");
   const sidebarColor = useColorModeValue("white", "gray.100");
 
   return (
@@ -44,8 +44,8 @@ const App = () => {
       <Box
         bg={sidebarBg}
         color={sidebarColor}
-        w={isCollapsed ? "80px" : "220px"}
-        minW={isCollapsed ? "80px" : "220px"}
+        w={isCollapsed ? "70px" : "250px"}
+        minW={isCollapsed ? "70px" : "250px"}
         transition="width 0.3s ease"
         p={4}
         boxShadow="sm"
@@ -57,7 +57,7 @@ const App = () => {
           mb={6}
         >
           {!isCollapsed && (
-            <Text fontSize="lg" fontWeight="bold" color={"blue.500"}>
+            <Text fontSize="lg" fontWeight="bold" color={"#0561ff"}>
               Navigation
             </Text>
           )}
@@ -66,6 +66,7 @@ const App = () => {
             size="sm"
             variant="solid" // ✅ use a valid variant
             colorScheme="blue" // ✅ sets the color theme
+            bgColor={"#0561ff"}
             onClick={() => setIsCollapsed((prev) => !prev)}
             icon={isCollapsed ? <FaArrowRight /> : <FaArrowLeft />}
           />
