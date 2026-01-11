@@ -44,16 +44,21 @@ const UserSchema = new mongoose.Schema(
     barangay: { type: String, required: true },
     zip: { type: String, required: true },
     telephone: { type: String, default: null },
-    role: { type: String, required: true, enum: ["admin", "user", "rescuers"] },
+    role: {
+      type: String,
+      required: true,
+      enum: ["admin", "user", "rescuers"],
+      default: "user",
+    },
     location: {
       type: {
         type: String,
         enum: ["Point"],
-        default: "Point",
+        default: undefined, // 🔥 IMPORTANT
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
-        required: true,
+        type: [Number],
+        default: undefined, // 🔥 IMPORTANT
       },
     },
   },
