@@ -488,9 +488,6 @@ export default function RoutePlannerApp() {
             />
           </Box>
 
-          {/* Payment Cards */}
-          <PaymentCards />
-
           {/* Saved Places */}
           <SavedPlaces />
 
