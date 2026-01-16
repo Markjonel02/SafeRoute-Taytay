@@ -6,13 +6,12 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 
 import Header from "../../components/routeplanning/Header";
-import SearchSection from "../../components/routeplanning/SearchComponent";
+import { SearchSection } from "../../components/routeplanning/SearchComponent";
 import MapComponent from "../../components/routeplanning/MapComponent";
 import { FilterTabs } from "../../components/routeplanning/FilterTabs";
 import RoutesList from "../../components/routeplanning/RouteList";
 import { searchLocations } from "../../services/searchLocations";
 import { getRouteFromOSRM } from "../../services/getRouteOSRM";
-import SearhComponent
 
 export default function RoutePlannerApp() {
   const [fromText, setFromText] = useState("");
@@ -37,7 +36,7 @@ export default function RoutePlannerApp() {
       } else {
         setFromSuggestions([]);
       }
-    }, 300); // Debounce 300ms
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [fromText]);
@@ -50,7 +49,7 @@ export default function RoutePlannerApp() {
       } else {
         setToSuggestions([]);
       }
-    }, 300); // Debounce 300ms
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [toText]);
@@ -65,6 +64,18 @@ export default function RoutePlannerApp() {
     setToCoords(location);
     setToText(location.displayName);
     setToSuggestions([]);
+  };
+
+  const handleSelectRoute = async (route) => {
+    setSelectedRoute(route);
+
+    // Fetch updated route data when a new route is selected
+    if (fromCoords && toCoords) {
+      const routeData = await getRouteFromOSRM(fromCoords, toCoords);
+      if (routeData) {
+        setRouteCoordinates(routeData.coordinates);
+      }
+    }
   };
 
   const handleSearch = async () => {
@@ -110,6 +121,8 @@ export default function RoutePlannerApp() {
             duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
             cost: Math.round(distance * 8),
             distance: distance.toFixed(2),
+            avgSpeed: routeData.avgSpeed,
+            congestionLevel: routeData.congestionLevel,
           },
           {
             id: 2,
@@ -119,6 +132,8 @@ export default function RoutePlannerApp() {
             duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
             cost: Math.round(distance * 12),
             distance: distance.toFixed(2),
+            avgSpeed: routeData.avgSpeed,
+            congestionLevel: routeData.congestionLevel,
           },
           {
             id: 3,
@@ -183,10 +198,10 @@ export default function RoutePlannerApp() {
   };
 
   return (
-    <Flex h="100vh" bg="gray.100">
+    <Flex h="100vh" bg="gray.100" gap={0}>
       {/* Left Panel */}
       <Box
-        w={{ base: "100%", md: "35%" }}
+        w={{ base: "100%", md: "40%" }}
         bg="gray.50"
         p={4}
         overflowY="auto"
@@ -213,7 +228,7 @@ export default function RoutePlannerApp() {
             <RoutesList
               routes={routes}
               selectedRoute={selectedRoute}
-              onSelectRoute={setSelectedRoute}
+              onSelectRoute={handleSelectRoute}
             />
           )}
         </VStack>
@@ -221,7 +236,7 @@ export default function RoutePlannerApp() {
 
       {/* Right Panel - Map */}
       <Box
-        w={{ base: "0%", md: "65%" }}
+        w={{ base: "0%", md: "60%" }}
         display={{ base: "none", md: "block" }}
         position="relative"
       >
