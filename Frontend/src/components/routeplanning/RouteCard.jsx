@@ -1,23 +1,15 @@
 // Route Card Component
-import React, { useState, useRef, useEffect } from "react";
 import {
-  Box,
   VStack,
   HStack,
-  Input,
-  Button,
   Card,
   CardBody,
-  Flex,
   Icon,
   Badge,
   Text,
-  Select,
 } from "@chakra-ui/react";
 
-import { FiMapPin, FiClock, FiDollarSign, FiArrowRight } from "react-icons/fi";
-import { LOCATIONS } from "../../utils/Locations";
-
+// Route Card Component
 const RouteCard = ({ route, selected, onSelect }) => {
   const modeIcons = {
     drive: "🚗",
@@ -44,22 +36,22 @@ const RouteCard = ({ route, selected, onSelect }) => {
               {modeIcons[route.mode]}
             </Text>
             <VStack spacing={0} align="start">
-              <Text fontWeight="bold" textTransform="uppercase" fontSize="sm">
-                {LOCATIONS[route.from].name}
+              <Text fontWeight="bold" fontSize="sm" noOfLines={1}>
+                {route.fromName}
               </Text>
               <Text fontSize="xs" color="gray.600">
-                {route.from}
+                Departure
               </Text>
             </VStack>
           </HStack>
           <Icon as={FiArrowRight} color="gray.400" />
           <HStack spacing={2}>
             <VStack spacing={0} align="end">
-              <Text fontWeight="bold" textTransform="uppercase" fontSize="sm">
-                {LOCATIONS[route.to].name}
+              <Text fontWeight="bold" fontSize="sm" noOfLines={1}>
+                {route.toName}
               </Text>
               <Text fontSize="xs" color="gray.600">
-                {route.to}
+                Destination
               </Text>
             </VStack>
           </HStack>
