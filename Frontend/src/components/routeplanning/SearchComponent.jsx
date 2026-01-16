@@ -1,74 +1,55 @@
-import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   VStack,
   HStack,
-  Input,
   Button,
   Card,
   CardBody,
-  Flex,
   Icon,
-  Badge,
-  Text,
-  Select,
 } from "@chakra-ui/react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-} from "react-leaflet";
-import L from "leaflet";
-import { FiMapPin, FiClock, FiDollarSign, FiArrowRight } from "react-icons/fi";
-import { LOCATIONS } from "../../utils/Locations";
-import { ROUTES } from "../../utils/Routes";
+
+import { FiArrowRight } from "react-icons/fi";
+
 // Search Component
-const SearchSection = ({ from, to, setFrom, setTo, onSearch, isLoading }) => (
+
+// Search Component
+export const SearchSection = ({
+  fromText,
+  toText,
+  setFromText,
+  setToText,
+  fromSuggestions,
+  toSuggestions,
+  onSelectFromLocation,
+  onSelectToLocation,
+  onSearch,
+  isLoading,
+}) => (
   <Card bg="white" shadow="md" mb={4}>
     <CardBody>
-      <VStack spacing={3}>
-        <HStack w="full" spacing={2}>
-          <Select
-            placeholder="From"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            bg="gray.50"
-            border="1px solid"
-            borderColor="gray.300"
-            _focus={{
-              borderColor: "purple.500",
-              boxShadow: "0 0 0 1px purple.500",
-            }}
-            isDisabled={isLoading}
-          >
-            {Object.entries(LOCATIONS).map(([code, loc]) => (
-              <option key={code} value={code}>
-                {loc.name} ({code})
-              </option>
-            ))}
-          </Select>
-          <Icon as={FiArrowRight} color="gray.400" />
-          <Select
-            placeholder="To"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            bg="gray.50"
-            border="1px solid"
-            borderColor="gray.300"
-            _focus={{
-              borderColor: "purple.500",
-              boxShadow: "0 0 0 1px purple.500",
-            }}
-            isDisabled={isLoading}
-          >
-            {Object.entries(LOCATIONS).map(([code, loc]) => (
-              <option key={code} value={code}>
-                {loc.name} ({code})
-              </option>
-            ))}
-          </Select>
+      <VStack spacing={4}>
+        <HStack w="full" spacing={3} align="flex-start">
+          <LocationSearchInput
+            label="From"
+            placeholder="Enter departure location..."
+            value={fromText}
+            suggestions={fromSuggestions}
+            onInputChange={setFromText}
+            onSelectLocation={onSelectFromLocation}
+            isLoading={isLoading}
+          />
+          <Box mt="27px">
+            <Icon as={FiArrowRight} color="gray.400" fontSize="20px" />
+          </Box>
+          <LocationSearchInput
+            label="To"
+            placeholder="Enter destination location..."
+            value={toText}
+            suggestions={toSuggestions}
+            onInputChange={setToText}
+            onSelectLocation={onSelectToLocation}
+            isLoading={isLoading}
+          />
         </HStack>
         <Button
           w="full"
@@ -77,6 +58,7 @@ const SearchSection = ({ from, to, setFrom, setTo, onSearch, isLoading }) => (
           onClick={onSearch}
           isLoading={isLoading}
           _hover={{ bg: "purple.700" }}
+          leftIcon={<FiSearch />}
         >
           {isLoading ? "Searching Routes..." : "Search Routes"}
         </Button>
@@ -84,5 +66,3 @@ const SearchSection = ({ from, to, setFrom, setTo, onSearch, isLoading }) => (
     </CardBody>
   </Card>
 );
-
-export default SearchSection;

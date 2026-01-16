@@ -1,38 +1,26 @@
 import { useEffect, useState } from "react";
 import { ROUTES } from "../../utils/Routes";
 
-import {
-  Box,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  Card,
-  CardBody,
-  Flex,
-  Icon,
-  Badge,
-  Text,
-  Select,
-} from "@chakra-ui/react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  useMap,
-} from "react-leaflet";
+import { Box, VStack, Flex, useToast } from "@chakra-ui/react";
+import { MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
-import { FiMapPin, FiClock, FiDollarSign, FiArrowRight } from "react-icons/fi";
+
 import Header from "../../components/routeplanning/Header";
 import SearchSection from "../../components/routeplanning/SearchComponent";
 import MapComponent from "../../components/routeplanning/MapComponent";
 import { FilterTabs } from "../../components/routeplanning/FilterTabs";
 import RoutesList from "../../components/routeplanning/RouteList";
+import { searchLocations } from "../../services/searchLocations";
+import { getRouteFromOSRM } from "../../services/getRouteOSRM";
+import SearhComponent
+
 export default function RoutePlannerApp() {
-  const [from, setFrom] = useState("BOM");
-  const [to, setTo] = useState("POO");
+  const [fromText, setFromText] = useState("");
+  const [toText, setToText] = useState("");
+  const [fromCoords, setFromCoords] = useState(null);
+  const [toCoords, setToCoords] = useState(null);
+  const [fromSuggestions, setFromSuggestions] = useState([]);
+  const [toSuggestions, setToSuggestions] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [activeTab, setActiveTab] = useState("Fastest");
@@ -41,8 +29,46 @@ export default function RoutePlannerApp() {
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const toast = useToast();
 
+  // Real-time search for "From" location
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (fromText.length > 0) {
+        searchLocations(fromText).then(setFromSuggestions);
+      } else {
+        setFromSuggestions([]);
+      }
+    }, 300); // Debounce 300ms
+
+    return () => clearTimeout(timer);
+  }, [fromText]);
+
+  // Real-time search for "To" location
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (toText.length > 0) {
+        searchLocations(toText).then(setToSuggestions);
+      } else {
+        setToSuggestions([]);
+      }
+    }, 300); // Debounce 300ms
+
+    return () => clearTimeout(timer);
+  }, [toText]);
+
+  const handleSelectFromLocation = (location) => {
+    setFromCoords(location);
+    setFromText(location.displayName);
+    setFromSuggestions([]);
+  };
+
+  const handleSelectToLocation = (location) => {
+    setToCoords(location);
+    setToText(location.displayName);
+    setToSuggestions([]);
+  };
+
   const handleSearch = async () => {
-    if (!from || !to) {
+    if (!fromCoords || !toCoords) {
       toast({
         title: "Please select both locations",
         status: "warning",
@@ -52,7 +78,7 @@ export default function RoutePlannerApp() {
       return;
     }
 
-    if (from === to) {
+    if (fromCoords.lat === toCoords.lat && fromCoords.lon === toCoords.lon) {
       toast({
         title: "Please select different locations",
         status: "warning",
@@ -66,7 +92,7 @@ export default function RoutePlannerApp() {
 
     try {
       // Fetch real route data
-      const routeData = await getRouteFromOSRM(from, to);
+      const routeData = await getRouteFromOSRM(fromCoords, toCoords);
 
       if (routeData) {
         setRouteCoordinates(routeData.coordinates);
@@ -78,8 +104,8 @@ export default function RoutePlannerApp() {
         const generatedRoutes = [
           {
             id: 1,
-            from,
-            to,
+            fromName: fromCoords.displayName,
+            toName: toCoords.displayName,
             mode: "drive",
             duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
             cost: Math.round(distance * 8),
@@ -87,8 +113,8 @@ export default function RoutePlannerApp() {
           },
           {
             id: 2,
-            from,
-            to,
+            fromName: fromCoords.displayName,
+            toName: toCoords.displayName,
             mode: "ride",
             duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
             cost: Math.round(distance * 12),
@@ -96,8 +122,8 @@ export default function RoutePlannerApp() {
           },
           {
             id: 3,
-            from,
-            to,
+            fromName: fromCoords.displayName,
+            toName: toCoords.displayName,
             mode: "railway",
             duration: `${Math.ceil((duration / 60) * 1.3)}h ${Math.round(
               (duration % 60) * 1.3
@@ -107,8 +133,8 @@ export default function RoutePlannerApp() {
           },
           {
             id: 4,
-            from,
-            to,
+            fromName: fromCoords.displayName,
+            toName: toCoords.displayName,
             mode: "flight",
             duration: `${Math.ceil((duration / 60) * 0.3)}h ${Math.round(
               (duration % 60) * 0.3
@@ -141,14 +167,6 @@ export default function RoutePlannerApp() {
           duration: 3,
           isClosable: true,
         });
-      } else {
-        toast({
-          title: "Error fetching routes",
-          description: "Unable to calculate route. Please try again.",
-          status: "error",
-          duration: 3,
-          isClosable: true,
-        });
       }
     } catch (error) {
       console.error("Search error:", error);
@@ -164,12 +182,6 @@ export default function RoutePlannerApp() {
     }
   };
 
-  useEffect(() => {
-    if (searched) {
-      handleSearch();
-    }
-  }, [activeTab]);
-
   return (
     <Flex h="100vh" bg="gray.100">
       {/* Left Panel */}
@@ -183,10 +195,14 @@ export default function RoutePlannerApp() {
         <VStack spacing={4} align="stretch">
           <Header />
           <SearchSection
-            from={from}
-            to={to}
-            setFrom={setFrom}
-            setTo={setTo}
+            fromText={fromText}
+            toText={toText}
+            setFromText={setFromText}
+            setToText={setToText}
+            fromSuggestions={fromSuggestions}
+            toSuggestions={toSuggestions}
+            onSelectFromLocation={handleSelectFromLocation}
+            onSelectToLocation={handleSelectToLocation}
             onSearch={handleSearch}
             isLoading={isLoading}
           />
@@ -219,8 +235,8 @@ export default function RoutePlannerApp() {
             attribution="&copy; OpenStreetMap contributors"
           />
           <MapComponent
-            from={from}
-            to={to}
+            fromCoords={fromCoords}
+            toCoords={toCoords}
             selectedRoute={selectedRoute}
             routeCoordinates={routeCoordinates}
           />

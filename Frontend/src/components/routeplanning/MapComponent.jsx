@@ -1,28 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-  Box,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  Card,
-  CardBody,
-  Flex,
-  Icon,
-  Badge,
-  Text,
-  Select,
-} from "@chakra-ui/react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  useMap,
-} from "react-leaflet";
+import React, { useEffect } from "react";
+import { VStack, Text } from "@chakra-ui/react";
+import { Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import { FiMapPin, FiClock, FiDollarSign, FiArrowRight } from "react-icons/fi";
 
 // Fix for leaflet default markers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -35,13 +14,17 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-import { LOCATIONS } from "../../utils/Locations";
-import { ROUTES } from "../../utils/Routes";
-
 // ============== COMPONENTS ==============
 
 // Map Component with Pan to Location
-const MapComponent = ({ from, to, selectedRoute, routeCoordinates }) => {
+
+// Map Component with Route Highlighting
+const MapComponent = ({
+  fromCoords,
+  toCoords,
+  selectedRoute,
+  routeCoordinates,
+}) => {
   const map = useMap();
 
   useEffect(() => {
@@ -65,11 +48,11 @@ const MapComponent = ({ from, to, selectedRoute, routeCoordinates }) => {
       )}
 
       {/* From Marker */}
-      {from && LOCATIONS[from] && (
-        <Marker position={LOCATIONS[from].coords}>
+      {fromCoords && (
+        <Marker position={[fromCoords.lat, fromCoords.lon]}>
           <Popup>
             <VStack spacing={1}>
-              <Text fontWeight="bold">📍 {LOCATIONS[from].name}</Text>
+              <Text fontWeight="bold">📍 {fromCoords.displayName}</Text>
               <Text fontSize="sm">Departure</Text>
             </VStack>
           </Popup>
@@ -77,11 +60,11 @@ const MapComponent = ({ from, to, selectedRoute, routeCoordinates }) => {
       )}
 
       {/* To Marker */}
-      {to && LOCATIONS[to] && (
-        <Marker position={LOCATIONS[to].coords}>
+      {toCoords && (
+        <Marker position={[toCoords.lat, toCoords.lon]}>
           <Popup>
             <VStack spacing={1}>
-              <Text fontWeight="bold">📍 {LOCATIONS[to].name}</Text>
+              <Text fontWeight="bold">📍 {toCoords.displayName}</Text>
               <Text fontSize="sm">Destination</Text>
             </VStack>
           </Popup>

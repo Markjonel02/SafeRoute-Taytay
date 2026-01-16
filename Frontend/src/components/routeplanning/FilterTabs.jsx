@@ -1,6 +1,7 @@
 import { HStack, Button } from "@chakra-ui/react";
 
 // Filter Tabs Component
+// Filter Tabs Component
 export const FilterTabs = ({ activeTab, setActiveTab }) => (
   <HStack spacing={2} mb={4}>
     {["Fastest", "Cheapest"].map((tab) => (
