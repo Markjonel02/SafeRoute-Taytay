@@ -8,7 +8,9 @@ import {
   Icon,
 } from "@chakra-ui/react";
 
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiSearch } from "react-icons/fi";
+import { LocationSearchInput } from "./LocationsSearch";
+// Search Component
 
 // Search Component
 
@@ -27,30 +29,33 @@ export const SearchSection = ({
 }) => (
   <Card bg="white" shadow="md" mb={4}>
     <CardBody>
-      <VStack spacing={4}>
-        <HStack w="full" spacing={3} align="flex-start">
-          <LocationSearchInput
-            label="From"
-            placeholder="Enter departure location..."
-            value={fromText}
-            suggestions={fromSuggestions}
-            onInputChange={setFromText}
-            onSelectLocation={onSelectFromLocation}
-            isLoading={isLoading}
+      <VStack spacing={4} w="full">
+        <LocationSearchInput
+          label="From"
+          placeholder="Enter departure location..."
+          value={fromText}
+          suggestions={fromSuggestions}
+          onInputChange={setFromText}
+          onSelectLocation={onSelectFromLocation}
+          isLoading={isLoading}
+        />
+        <Box w="full" display="flex" justifyContent="center">
+          <Icon
+            as={FiArrowRight}
+            color="gray.400"
+            fontSize="20px"
+            transform="rotate(90deg)"
           />
-          <Box mt="27px">
-            <Icon as={FiArrowRight} color="gray.400" fontSize="20px" />
-          </Box>
-          <LocationSearchInput
-            label="To"
-            placeholder="Enter destination location..."
-            value={toText}
-            suggestions={toSuggestions}
-            onInputChange={setToText}
-            onSelectLocation={onSelectToLocation}
-            isLoading={isLoading}
-          />
-        </HStack>
+        </Box>
+        <LocationSearchInput
+          label="To"
+          placeholder="Enter destination location..."
+          value={toText}
+          suggestions={toSuggestions}
+          onInputChange={setToText}
+          onSelectLocation={onSelectToLocation}
+          isLoading={isLoading}
+        />
         <Button
           w="full"
           bg="purple.600"

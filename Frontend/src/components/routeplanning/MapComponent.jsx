@@ -19,6 +19,8 @@ L.Icon.Default.mergeOptions({
 // Map Component with Pan to Location
 
 // Map Component with Route Highlighting
+
+// Map Component with Route Highlighting
 const MapComponent = ({
   fromCoords,
   toCoords,
@@ -28,22 +30,23 @@ const MapComponent = ({
   const map = useMap();
 
   useEffect(() => {
-    if (routeCoordinates && routeCoordinates.length > 0) {
+    if (routeCoordinates && routeCoordinates.length > 0 && selectedRoute) {
       const bounds = L.latLngBounds(routeCoordinates);
-      map.fitBounds(bounds, { padding: [50, 50], animate: true });
+      map.fitBounds(bounds, { padding: [80, 80], animate: true, duration: 1 });
     }
-  }, [routeCoordinates, map]);
+  }, [routeCoordinates, selectedRoute, map]);
 
   return (
     <>
       {/* Route Line - Highlighted when selected */}
-      {routeCoordinates && routeCoordinates.length > 0 && (
+      {routeCoordinates && routeCoordinates.length > 0 && selectedRoute && (
         <Polyline
           positions={routeCoordinates}
-          color={selectedRoute ? "#6b46c1" : "#94a3b8"}
-          weight={selectedRoute ? 5 : 3}
-          opacity={selectedRoute ? 1 : 0.6}
-          dashArray={!selectedRoute ? "5, 5" : ""}
+          color="#6b46c1"
+          weight={6}
+          opacity={0.9}
+          lineCap="round"
+          lineJoin="round"
         />
       )}
 

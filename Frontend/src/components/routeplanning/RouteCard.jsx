@@ -8,8 +8,7 @@ import {
   Badge,
   Text,
 } from "@chakra-ui/react";
-
-// Route Card Component
+import { FiClock, FiDollarSign } from "react-icons/fi";
 const RouteCard = ({ route, selected, onSelect }) => {
   const modeIcons = {
     drive: "🚗",
@@ -30,56 +29,61 @@ const RouteCard = ({ route, selected, onSelect }) => {
       _hover={{ borderColor: "purple.600", shadow: "md" }}
     >
       <CardBody>
-        <HStack justify="space-between" mb={3}>
-          <HStack spacing={2}>
-            <Text fontSize="lg" fontWeight="bold">
-              {modeIcons[route.mode]}
-            </Text>
-            <VStack spacing={0} align="start">
-              <Text fontWeight="bold" fontSize="sm" noOfLines={1}>
-                {route.fromName}
-              </Text>
-              <Text fontSize="xs" color="gray.600">
-                Departure
-              </Text>
-            </VStack>
-          </HStack>
-          <Icon as={FiArrowRight} color="gray.400" />
-          <HStack spacing={2}>
-            <VStack spacing={0} align="end">
-              <Text fontWeight="bold" fontSize="sm" noOfLines={1}>
-                {route.toName}
-              </Text>
-              <Text fontSize="xs" color="gray.600">
-                Destination
-              </Text>
-            </VStack>
-          </HStack>
-        </HStack>
-
-        <HStack justify="space-between" spacing={4}>
-          <HStack spacing={1} fontSize="sm">
-            <Icon as={FiClock} color="purple.600" />
-            <VStack spacing={0}>
-              <Text fontWeight="bold">{route.duration}</Text>
-              <Text fontSize="xs" color="gray.600">
-                {route.distance} km
-              </Text>
-            </VStack>
-          </HStack>
-          <Badge
-            bg="purple.600"
-            color="white"
-            px={3}
-            py={1}
-            borderRadius="full"
-          >
-            <HStack spacing={1}>
-              <Icon as={FiDollarSign} />
-              <Text>₹{route.cost}</Text>
+        <VStack spacing={3} align="stretch">
+          {/* Top Section - Mode and Time */}
+          <HStack justify="space-between">
+            <HStack spacing={2}>
+              <Text fontSize="2xl">{modeIcons[route.mode]}</Text>
+              <VStack spacing={0} align="start">
+                <Text fontWeight="bold" textTransform="uppercase" fontSize="sm">
+                  {route.mode}
+                </Text>
+                <Text fontSize="xs" color="gray.600">
+                  {route.fromName} → {route.toName}
+                </Text>
+              </VStack>
             </HStack>
-          </Badge>
-        </HStack>
+            <Badge
+              bg="purple.600"
+              color="white"
+              px={3}
+              py={1}
+              borderRadius="full"
+            >
+              <HStack spacing={1}>
+                <Icon as={FiDollarSign} />
+                <Text>₹{route.cost}</Text>
+              </HStack>
+            </Badge>
+          </HStack>
+
+          <Divider />
+
+          {/* Time and Distance Info */}
+          <HStack justify="space-between" spacing={2}>
+            <HStack spacing={1} fontSize="sm">
+              <Icon as={FiClock} color="purple.600" />
+              <VStack spacing={0}>
+                <Text fontWeight="bold">{route.duration}</Text>
+                <Text fontSize="xs" color="gray.600">
+                  {route.distance} km
+                </Text>
+              </VStack>
+            </HStack>
+
+            {route.mode === "drive" && (
+              <VStack spacing={0} align="end" fontSize="xs">
+                <Text fontWeight="bold">{route.avgSpeed} km/h</Text>
+                <Text color="gray.600">Avg Speed</Text>
+              </VStack>
+            )}
+          </HStack>
+
+          {/* Traffic Status */}
+          {route.mode === "drive" && route.congestionLevel && (
+            <TrafficStatus level={route.congestionLevel} />
+          )}
+        </VStack>
       </CardBody>
     </Card>
   );

@@ -1,6 +1,6 @@
 // Location Search Input with Dropdown
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   VStack,
@@ -18,22 +18,8 @@ import {
   ListItem,
   Divider,
 } from "@chakra-ui/react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-} from "react-leaflet";
-import L from "leaflet";
-import {
-  FiMapPin,
-  FiClock,
-  FiDollarSign,
-  FiArrowRight,
-  FiSearch,
-} from "react-icons/fi";
 
+import { FiMapPin } from "react-icons/fi";
 export const LocationSearchInput = ({
   label,
   placeholder,
@@ -46,7 +32,7 @@ export const LocationSearchInput = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   return (
-    <Box position="relative" flex="1">
+    <Box position="relative" flex="1" w="full">
       <Text fontSize="sm" fontWeight="bold" mb={1} color="gray.700">
         {label}
       </Text>
