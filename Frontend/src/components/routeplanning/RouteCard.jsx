@@ -20,8 +20,8 @@ import { LOCATIONS } from "../../utils/Locations";
 
 const RouteCard = ({ route, selected, onSelect }) => {
   const modeIcons = {
-    flight: "✈️",
     drive: "🚗",
+    flight: "✈️",
     railway: "🚂",
     ride: "🚕",
   };
@@ -71,7 +71,7 @@ const RouteCard = ({ route, selected, onSelect }) => {
             <VStack spacing={0}>
               <Text fontWeight="bold">{route.duration}</Text>
               <Text fontSize="xs" color="gray.600">
-                {route.distance}
+                {route.distance} km
               </Text>
             </VStack>
           </HStack>
@@ -84,7 +84,7 @@ const RouteCard = ({ route, selected, onSelect }) => {
           >
             <HStack spacing={1}>
               <Icon as={FiDollarSign} />
-              <Text>{route.cost}</Text>
+              <Text>₹{route.cost}</Text>
             </HStack>
           </Badge>
         </HStack>

@@ -41,37 +41,50 @@ import { ROUTES } from "../../utils/Routes";
 // ============== COMPONENTS ==============
 
 // Map Component with Pan to Location
-const MapComponent = ({ from, to, selectedRoute }) => {
+const MapComponent = ({ from, to, selectedRoute, routeCoordinates }) => {
   const map = useMap();
-  const [route, setRoute] = useState(null);
 
   useEffect(() => {
-    if (from && to && selectedRoute) {
-      const fromCoords = LOCATIONS[from]?.coords;
-      const toCoords = LOCATIONS[to]?.coords;
-
-      if (fromCoords && toCoords) {
-        setRoute([fromCoords, toCoords]);
-
-        const bounds = L.latLngBounds([fromCoords, toCoords]);
-        map.fitBounds(bounds, { padding: [50, 50] });
-      }
+    if (routeCoordinates && routeCoordinates.length > 0) {
+      const bounds = L.latLngBounds(routeCoordinates);
+      map.fitBounds(bounds, { padding: [50, 50], animate: true });
     }
-  }, [from, to, selectedRoute, map]);
+  }, [routeCoordinates, map]);
 
   return (
     <>
-      {route && (
-        <Polyline positions={route} color="#6b46c1" weight={3} opacity={0.8} />
+      {/* Route Line - Highlighted when selected */}
+      {routeCoordinates && routeCoordinates.length > 0 && (
+        <Polyline
+          positions={routeCoordinates}
+          color={selectedRoute ? "#6b46c1" : "#94a3b8"}
+          weight={selectedRoute ? 5 : 3}
+          opacity={selectedRoute ? 1 : 0.6}
+          dashArray={!selectedRoute ? "5, 5" : ""}
+        />
       )}
+
+      {/* From Marker */}
       {from && LOCATIONS[from] && (
         <Marker position={LOCATIONS[from].coords}>
-          <Popup>{LOCATIONS[from].name}</Popup>
+          <Popup>
+            <VStack spacing={1}>
+              <Text fontWeight="bold">📍 {LOCATIONS[from].name}</Text>
+              <Text fontSize="sm">Departure</Text>
+            </VStack>
+          </Popup>
         </Marker>
       )}
+
+      {/* To Marker */}
       {to && LOCATIONS[to] && (
         <Marker position={LOCATIONS[to].coords}>
-          <Popup>{LOCATIONS[to].name}</Popup>
+          <Popup>
+            <VStack spacing={1}>
+              <Text fontWeight="bold">📍 {LOCATIONS[to].name}</Text>
+              <Text fontSize="sm">Destination</Text>
+            </VStack>
+          </Popup>
         </Marker>
       )}
     </>

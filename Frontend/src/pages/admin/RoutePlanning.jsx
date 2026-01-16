@@ -37,27 +37,131 @@ export default function RoutePlannerApp() {
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [activeTab, setActiveTab] = useState("Fastest");
   const [searched, setSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const toast = useToast();
 
-  const handleSearch = () => {
-    const filteredRoutes = ROUTES.filter((r) => r.from === from && r.to === to);
-
-    if (activeTab === "Fastest") {
-      filteredRoutes.sort((a, b) => {
-        const aMin = parseInt(a.duration);
-        const bMin = parseInt(b.duration);
-        return aMin - bMin;
+  const handleSearch = async () => {
+    if (!from || !to) {
+      toast({
+        title: "Please select both locations",
+        status: "warning",
+        duration: 3,
+        isClosable: true,
       });
-    } else {
-      filteredRoutes.sort((a, b) => {
-        const aCost = parseInt(a.cost.replace("₹", ""));
-        const bCost = parseInt(b.cost.replace("₹", ""));
-        return aCost - bCost;
-      });
+      return;
     }
 
-    setRoutes(filteredRoutes);
-    setSelectedRoute(filteredRoutes[0] || null);
-    setSearched(true);
+    if (from === to) {
+      toast({
+        title: "Please select different locations",
+        status: "warning",
+        duration: 3,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Fetch real route data
+      const routeData = await getRouteFromOSRM(from, to);
+
+      if (routeData) {
+        setRouteCoordinates(routeData.coordinates);
+
+        // Generate route options based on real data
+        const distance = parseFloat(routeData.distance);
+        const duration = routeData.duration;
+
+        const generatedRoutes = [
+          {
+            id: 1,
+            from,
+            to,
+            mode: "drive",
+            duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
+            cost: Math.round(distance * 8),
+            distance: distance.toFixed(2),
+          },
+          {
+            id: 2,
+            from,
+            to,
+            mode: "ride",
+            duration: `${Math.ceil(duration / 60)}h ${duration % 60}m`,
+            cost: Math.round(distance * 12),
+            distance: distance.toFixed(2),
+          },
+          {
+            id: 3,
+            from,
+            to,
+            mode: "railway",
+            duration: `${Math.ceil((duration / 60) * 1.3)}h ${Math.round(
+              (duration % 60) * 1.3
+            )}m`,
+            cost: Math.round(distance * 2),
+            distance: distance.toFixed(2),
+          },
+          {
+            id: 4,
+            from,
+            to,
+            mode: "flight",
+            duration: `${Math.ceil((duration / 60) * 0.3)}h ${Math.round(
+              (duration % 60) * 0.3
+            )}m`,
+            cost: Math.round(distance * 15),
+            distance: distance.toFixed(2),
+          },
+        ];
+
+        // Sort by selected tab
+        let sortedRoutes = [...generatedRoutes];
+        if (activeTab === "Fastest") {
+          sortedRoutes.sort((a, b) => {
+            const aMin = parseInt(a.duration);
+            const bMin = parseInt(b.duration);
+            return aMin - bMin;
+          });
+        } else {
+          sortedRoutes.sort((a, b) => a.cost - b.cost);
+        }
+
+        setRoutes(sortedRoutes);
+        setSelectedRoute(sortedRoutes[0]);
+        setSearched(true);
+
+        toast({
+          title: "Routes found!",
+          description: `Found ${sortedRoutes.length} route options`,
+          status: "success",
+          duration: 3,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Error fetching routes",
+          description: "Unable to calculate route. Please try again.",
+          status: "error",
+          duration: 3,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to search routes",
+        status: "error",
+        duration: 3,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -65,10 +169,6 @@ export default function RoutePlannerApp() {
       handleSearch();
     }
   }, [activeTab]);
-
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   return (
     <Flex h="100vh" bg="gray.100">
@@ -88,6 +188,7 @@ export default function RoutePlannerApp() {
             setFrom={setFrom}
             setTo={setTo}
             onSearch={handleSearch}
+            isLoading={isLoading}
           />
           {searched && (
             <FilterTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -109,15 +210,20 @@ export default function RoutePlannerApp() {
         position="relative"
       >
         <MapContainer
-          center={[19.076, 72.8777]}
-          zoom={7}
+          center={[20.5937, 78.9629]}
+          zoom={5}
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
           />
-          <MapComponent from={from} to={to} selectedRoute={selectedRoute} />
+          <MapComponent
+            from={from}
+            to={to}
+            selectedRoute={selectedRoute}
+            routeCoordinates={routeCoordinates}
+          />
         </MapContainer>
       </Box>
     </Flex>
