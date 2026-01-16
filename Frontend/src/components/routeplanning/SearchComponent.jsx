@@ -25,7 +25,7 @@ import { FiMapPin, FiClock, FiDollarSign, FiArrowRight } from "react-icons/fi";
 import { LOCATIONS } from "../../utils/Locations";
 import { ROUTES } from "../../utils/Routes";
 // Search Component
-const SearchSection = ({ from, to, setFrom, setTo, onSearch }) => (
+const SearchSection = ({ from, to, setFrom, setTo, onSearch, isLoading }) => (
   <Card bg="white" shadow="md" mb={4}>
     <CardBody>
       <VStack spacing={3}>
@@ -41,6 +41,7 @@ const SearchSection = ({ from, to, setFrom, setTo, onSearch }) => (
               borderColor: "purple.500",
               boxShadow: "0 0 0 1px purple.500",
             }}
+            isDisabled={isLoading}
           >
             {Object.entries(LOCATIONS).map(([code, loc]) => (
               <option key={code} value={code}>
@@ -60,6 +61,7 @@ const SearchSection = ({ from, to, setFrom, setTo, onSearch }) => (
               borderColor: "purple.500",
               boxShadow: "0 0 0 1px purple.500",
             }}
+            isDisabled={isLoading}
           >
             {Object.entries(LOCATIONS).map(([code, loc]) => (
               <option key={code} value={code}>
@@ -73,9 +75,10 @@ const SearchSection = ({ from, to, setFrom, setTo, onSearch }) => (
           bg="purple.600"
           color="white"
           onClick={onSearch}
+          isLoading={isLoading}
           _hover={{ bg: "purple.700" }}
         >
-          Search Routes
+          {isLoading ? "Searching Routes..." : "Search Routes"}
         </Button>
       </VStack>
     </CardBody>
